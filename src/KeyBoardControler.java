@@ -75,7 +75,7 @@ public class KeyBoardControler implements KeyListener {
 		
 	}
 	
-	public static final String keymap() {
+	public static String keymap() {
 		return "Avancer: "+KeyEvent.getKeyText(FORWARD)+
 				"\nReculer: "+KeyEvent.getKeyText(BACKWARD)+
 				"\nDroite: "+KeyEvent.getKeyText(RIGHT)+

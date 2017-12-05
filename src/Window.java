@@ -7,7 +7,7 @@ import javax.swing.JLabel;
 public class Window extends JFrame {
 	private static final long serialVersionUID = -8255319694373975038L;
 	private Robot robot;
-	
+
 	public Window(Robot robot) {
 		this.robot = robot;
 		this.setTitle("Controleur de robot");

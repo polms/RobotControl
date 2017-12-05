@@ -9,7 +9,7 @@ public class Robot {
 	public static final int BACKWARD = 550;
 	public static final int STOPPED = 500;
 	public static final int FAST_TURN = 2500;
-	private static enum STATE {ROLLING, STOPPED}; 
+	private enum STATE {ROLLING, STOPPED}
 	private String name;
 	private RobotConnector conn;
 	private STATE state;

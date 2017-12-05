@@ -1,13 +1,12 @@
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 public class RobotConnector {
 	private Socket mSocket;
 	private DataOutputStream mDos;
-	private String hostname;
-	private int port;
+	private final String hostname;
+	private final int port;
 	
 	public RobotConnector(String hostname, int port)
 	{
@@ -27,8 +26,6 @@ public class RobotConnector {
 			mDos = new DataOutputStream(mSocket.getOutputStream());
 			System.out.println("Connected");
 			return true;
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -39,8 +36,10 @@ public class RobotConnector {
 	
 	public boolean disconnect() {
 		try {
-			mDos.close();
-			return true;
+			if (mDos != null) {
+			    mDos.close();
+			    return true;
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
