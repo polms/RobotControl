@@ -101,6 +101,14 @@ public class Robot {
 		return name;
 	}
 
+	public void rawMotorInput(int motor, int speed) {
+		this.moveMotor(motor, speed);
+	}
+
+	public HashMap<Integer, EnumMap<SPEED, Integer>> getMotors() {
+		return this.motors;
+	}
+
 	private EnumMap<SPEED, Integer> motorsInitCal(int motor) {
 		EnumMap temp;
 		switch(motor) {
@@ -184,5 +192,4 @@ public class Robot {
 		int speed_value = getMotorSpeedValue(motor, speed);
 		this.conn.moveServo(motor, speed_value);
 	}
-
 }

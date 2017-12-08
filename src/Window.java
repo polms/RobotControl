@@ -1,8 +1,8 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
+import javax.swing.*;
 
 public class Window extends JFrame {
 	private static final long serialVersionUID = -8255319694373975038L;
@@ -15,7 +15,6 @@ public class Window extends JFrame {
 		this.addKeyListener(new KeyBoardControler(this.robot));
 		this.buildWindow();
 		this.setVisible(true);
-		this.setAlwaysOnTop(true);
 		this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    this.addWindowListener(new WindowAdapter()
@@ -33,7 +32,16 @@ public class Window extends JFrame {
 		JPanel pannel = new JPanel();
 		JLabel help = new JLabel("<html>Cette fenêtre permet de contrôler le robot<br/>"
 								+KeyBoardControler.keymap().replaceAll("\n", "<br/>")+"</html>");
+		JButton call_butt = new JButton("cal");
+		call_butt.setFocusable(false);
+		call_butt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent actionEvent) {
+				new CalWindow(robot);
+			}
+		});
 		pannel.add(help);
+		pannel.add(call_butt);
 		this.add(pannel);
 	}
 }
