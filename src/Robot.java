@@ -1,27 +1,29 @@
+import java.util.EnumMap;
+import java.util.HashMap;
 
 public class Robot {
-	public static final int S_LEFT = 1;
-	public static final int S_RIGHT = 2;
-	public static final int S_TOURNE = 3;
-	public static final int FAST = 2500;
-	public static final int SLOW = 1200;
-	public static final int REALY_SLOW = 1000;
-	public static final int BACKWARD = 550;
-	public static final int STOPPED = 500;
-	public static final int FAST_TURN = 2500;
+	public enum SPEED {FAST, SLOW, REALY_SLOW, STOPPED, BACKWARD_REALY_SLOW, BACKWARD_SLOW, BACKWARD_FAST}
 	private enum STATE {ROLLING, STOPPED}
 	private String name;
+	private HashMap<Integer, EnumMap<SPEED, Integer>> motors;
 	private RobotConnector conn;
 	private STATE state;
-	private int roling_speed;
-	
+	private SPEED roling_speed;
+	private static final int S_LEFT = 1;
+	private static final int S_RIGHT = 2;
+	private static final int S_TOURNE = 3;
+
 	public Robot(String name, RobotConnector connector) {
 		this.name = name;
 		this.conn = connector;
+		this.motors = new HashMap<>();
+		this.motors.put(S_LEFT, motorsInitCal(S_LEFT));
+		this.motors.put(S_RIGHT, motorsInitCal(S_RIGHT));
+		this.motors.put(S_TOURNE, motorsInitCal(S_TOURNE));
 		this.state = STATE.STOPPED;
-		this.roling_speed = 0;
+		this.roling_speed = SPEED.STOPPED;
 	}
-	
+
 	public boolean connect() {
 		return conn.connect();
 	}
@@ -30,50 +32,44 @@ public class Robot {
 		return conn.disconnect();
 	}
 	
-	public void forward(int speed) {
-		this.conn.moveServo(S_LEFT, speed);
-		this.conn.moveServo(S_RIGHT, speed);
-		this.state = STATE.ROLLING;
-		this.roling_speed = speed;
-	}
-	
-	public void backward(int speed) {
-		this.conn.moveServo(S_LEFT, speed);
-		this.conn.moveServo(S_RIGHT, speed);
+	public void move(SPEED speed) {
+		if (speed == SPEED.STOPPED) this.stop();
+		this.moveMotor(S_LEFT, speed);
+		this.moveMotor(S_RIGHT, speed);
 		this.state = STATE.ROLLING;
 		this.roling_speed = speed;
 	}
 	
 	public void stop() {
-		this.conn.moveServo(S_LEFT, STOPPED);
-		this.conn.moveServo(S_RIGHT, STOPPED);
+		this.moveMotor(S_LEFT, SPEED.STOPPED);
+		this.moveMotor(S_RIGHT, SPEED.STOPPED);
 		this.state = STATE.STOPPED;
-		this.roling_speed = STOPPED;
+		this.roling_speed = SPEED.STOPPED;
 	}
 	
-	public void leftTurn(int speed_diff) {
+	public void leftTurn() {
 		switch (state) {
 		case ROLLING:
-			this.conn.moveServo(S_LEFT, this.roling_speed - speed_diff);
-			this.conn.moveServo(S_RIGHT, this.roling_speed);
+			this.moveMotor(S_LEFT, SPEED.STOPPED);
+			this.moveMotor(S_RIGHT, this.roling_speed);
 			break;
 		case STOPPED:
-			this.conn.moveServo(S_LEFT, REALY_SLOW);
-			this.conn.moveServo(S_RIGHT, FAST);
+			this.moveMotor(S_LEFT, SPEED.STOPPED);
+			this.moveMotor(S_RIGHT, SPEED.FAST);
 			break;
 		}
 		this.state = STATE.ROLLING;
 	}
 	
-	public void rightTurn(int speed_diff) {
+	public void rightTurn() {
 		switch (this.state) {
 		case ROLLING:
-			this.conn.moveServo(S_RIGHT, this.roling_speed - speed_diff);
-			this.conn.moveServo(S_LEFT, this.roling_speed);
+			this.moveMotor(S_LEFT, this.roling_speed);
+			this.moveMotor(S_RIGHT, SPEED.STOPPED);
 			break;
 		case STOPPED:
-			this.conn.moveServo(S_RIGHT, REALY_SLOW);
-			this.conn.moveServo(S_LEFT, FAST);
+			this.moveMotor(S_LEFT, SPEED.FAST);
+			this.moveMotor(S_RIGHT, SPEED.STOPPED);
 			break;
 		}
 		this.state = STATE.ROLLING;
@@ -82,8 +78,8 @@ public class Robot {
 	public void stopTurn() {
 		switch (this.state) {
 		case ROLLING:
-			this.conn.moveServo(S_RIGHT, this.roling_speed);
-			this.conn.moveServo(S_LEFT, this.roling_speed);
+			this.moveMotor(S_RIGHT, this.roling_speed);
+			this.moveMotor(S_LEFT, this.roling_speed);
 			break;
 		case STOPPED:
 			this.stop();
@@ -91,21 +87,102 @@ public class Robot {
 		}		
 	}
 	
-	public void tourneClk(int speed) {
-		this.conn.moveServo(S_TOURNE, speed);
+	public void tourne(SPEED speed) {
+		this.moveMotor(S_TOURNE, speed);
 	}
-	
-	public void tourneCclk(int speed) {
-		this.conn.moveServo(S_TOURNE, speed);
-	}
+
 	
 	public void tourneStop() {
-		this.conn.moveServo(S_TOURNE, STOPPED);
+		this.moveMotor(S_TOURNE, SPEED.STOPPED);
 	}
-	
+
 	@Override
 	public String toString() {
 		return name;
 	}
-	
+
+	private EnumMap<SPEED, Integer> motorsInitCal(int motor) {
+		EnumMap temp;
+		switch(motor) {
+			case S_LEFT:
+				temp = new EnumMap<SPEED, Integer>(SPEED.class);
+				temp.put(SPEED.FAST, 2500);
+				temp.put(SPEED.SLOW, 2000);
+				temp.put(SPEED.REALY_SLOW, 1800);
+				temp.put(SPEED.STOPPED, 1500);
+				temp.put(SPEED.BACKWARD_REALY_SLOW, 1300);
+				temp.put(SPEED.BACKWARD_SLOW, 1000);
+				temp.put(SPEED.BACKWARD_FAST, 500);
+				break;
+			case S_RIGHT:
+				temp = new EnumMap<SPEED, Integer>(SPEED.class);
+				temp.put(SPEED.FAST, 2500);
+				temp.put(SPEED.SLOW, 2000);
+				temp.put(SPEED.REALY_SLOW, 1800);
+				temp.put(SPEED.STOPPED, 1500);
+				temp.put(SPEED.BACKWARD_REALY_SLOW, 1300);
+				temp.put(SPEED.BACKWARD_SLOW, 1000);
+				temp.put(SPEED.BACKWARD_FAST, 500);
+				break;
+			case S_TOURNE:
+				temp = new EnumMap<SPEED, Integer>(SPEED.class);
+				temp.put(SPEED.FAST, 2500);
+				temp.put(SPEED.SLOW, 2000);
+				temp.put(SPEED.REALY_SLOW, 1800);
+				temp.put(SPEED.STOPPED, 1500);
+				temp.put(SPEED.BACKWARD_REALY_SLOW, 1300);
+				temp.put(SPEED.BACKWARD_SLOW, 1000);
+				temp.put(SPEED.BACKWARD_FAST, 500);
+				break;
+			default:
+				throw new IllegalArgumentException("Motor number unknown");
+		}
+		return temp;
+	}
+
+	private int getMotorSpeedValue(int motor, SPEED speed) {
+		EnumMap<SPEED, Integer> motor_speeds = this.motors.get(motor);
+		return motor_speeds.get(speed);
+	}
+
+	private SPEED reverseSpeed(SPEED speed) {
+		SPEED ret = null;
+		switch (speed) {
+			case STOPPED:
+				ret = SPEED.STOPPED;
+				break;
+			case FAST:
+				ret = SPEED.BACKWARD_FAST;
+				break;
+			case SLOW:
+				ret = SPEED.BACKWARD_SLOW;
+				break;
+			case REALY_SLOW:
+				ret = SPEED.BACKWARD_REALY_SLOW;
+				break;
+			case BACKWARD_FAST:
+				ret = SPEED.FAST;
+				break;
+			case BACKWARD_SLOW:
+				ret = SPEED.SLOW;
+				break;
+			case BACKWARD_REALY_SLOW:
+				ret = SPEED.REALY_SLOW;
+				break;
+			default:
+				throw new IllegalArgumentException("Unknown speed");
+		}
+		return ret;
+	}
+
+	private void moveMotor(int motor, int pos) {
+		this.conn.moveServo(motor, pos);
+	}
+
+	private void moveMotor(int motor, SPEED speed) {
+		if (motor == S_RIGHT) speed = reverseSpeed(speed);
+		int speed_value = getMotorSpeedValue(motor, speed);
+		this.conn.moveServo(motor, speed_value);
+	}
+
 }
