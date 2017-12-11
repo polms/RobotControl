@@ -122,13 +122,13 @@ public class Robot {
 				break;
 			case S_RIGHT:
 				temp = new EnumMap<SPEED, Integer>(SPEED.class);
-				temp.put(SPEED.FAST, 2500);
-				temp.put(SPEED.SLOW, 1544);
-				temp.put(SPEED.REALY_SLOW, 1511);
+				temp.put(SPEED.FAST, 500);
+				temp.put(SPEED.SLOW, 1446);
+				temp.put(SPEED.REALY_SLOW, 1479);
 				temp.put(SPEED.STOPPED, 1500);
-				temp.put(SPEED.BACKWARD_REALY_SLOW, 1479);
-				temp.put(SPEED.BACKWARD_SLOW, 1446);
-				temp.put(SPEED.BACKWARD_FAST, 500);
+				temp.put(SPEED.BACKWARD_REALY_SLOW, 1511);
+				temp.put(SPEED.BACKWARD_SLOW, 1544);
+				temp.put(SPEED.BACKWARD_FAST, 2500);
 				break;
 			case S_TOURNE:
 				temp = new EnumMap<SPEED, Integer>(SPEED.class);
@@ -186,7 +186,6 @@ public class Robot {
 	}
 
 	private void moveMotor(int motor, SPEED speed) {
-		if (motor == S_RIGHT) speed = reverseSpeed(speed);
 		int speed_value = getMotorSpeedValue(motor, speed);
 		this.conn.moveServo(motor, speed_value);
 	}
