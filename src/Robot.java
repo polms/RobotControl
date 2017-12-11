@@ -47,32 +47,32 @@ public class Robot {
 		this.roling_speed = SPEED.STOPPED;
 	}
 	
-	public void leftTurn() {
+	public void leftTurn(SPEED speed) {
 		switch (state) {
 		case ROLLING:
 			this.moveMotor(S_LEFT, SPEED.STOPPED);
 			this.moveMotor(S_RIGHT, this.roling_speed);
 			break;
 		case STOPPED:
-			this.moveMotor(S_LEFT, SPEED.BACKWARD_SLOW);
-			this.moveMotor(S_RIGHT, SPEED.FAST);
+			this.moveMotor(S_LEFT, reverseSpeed(speed));
+			this.moveMotor(S_RIGHT, speed);
 			break;
 		}
 	}
-	
-	public void rightTurn() {
+
+	public void rightTurn(SPEED speed) {
 		switch (this.state) {
 		case ROLLING:
 			this.moveMotor(S_LEFT, this.roling_speed);
 			this.moveMotor(S_RIGHT, SPEED.STOPPED);
 			break;
 		case STOPPED:
-			this.moveMotor(S_LEFT, SPEED.FAST);
-			this.moveMotor(S_RIGHT, SPEED.BACKWARD_SLOW);
+			this.moveMotor(S_LEFT, speed);
+			this.moveMotor(S_RIGHT, reverseSpeed(speed));
 			break;
 		}
 	}
-	
+
 	public void stopTurn() {
 		switch (this.state) {
 		case ROLLING:
@@ -114,31 +114,31 @@ public class Robot {
 				temp = new EnumMap<SPEED, Integer>(SPEED.class);
 				temp.put(SPEED.FAST, 2500);
 				temp.put(SPEED.SLOW, 1544);
-				temp.put(SPEED.REALY_SLOW, 1511);
+				temp.put(SPEED.REALY_SLOW, 1522);
 				temp.put(SPEED.STOPPED, 1500);
-				temp.put(SPEED.BACKWARD_REALY_SLOW, 1479);
-				temp.put(SPEED.BACKWARD_SLOW, 1446);
+				temp.put(SPEED.BACKWARD_REALY_SLOW, 1478);
+				temp.put(SPEED.BACKWARD_SLOW, 1456);
 				temp.put(SPEED.BACKWARD_FAST, 500);
 				break;
 			case S_RIGHT:
 				temp = new EnumMap<SPEED, Integer>(SPEED.class);
 				temp.put(SPEED.FAST, 500);
-				temp.put(SPEED.SLOW, 1446);
-				temp.put(SPEED.REALY_SLOW, 1479);
+				temp.put(SPEED.SLOW, 1456);
+				temp.put(SPEED.REALY_SLOW, 1478);
 				temp.put(SPEED.STOPPED, 1500);
-				temp.put(SPEED.BACKWARD_REALY_SLOW, 1511);
+				temp.put(SPEED.BACKWARD_REALY_SLOW, 1522);
 				temp.put(SPEED.BACKWARD_SLOW, 1544);
 				temp.put(SPEED.BACKWARD_FAST, 2500);
 				break;
 			case S_TOURNE:
 				temp = new EnumMap<SPEED, Integer>(SPEED.class);
-				temp.put(SPEED.FAST, 2500);
-				temp.put(SPEED.SLOW, 1544);
+				temp.put(SPEED.FAST, 1554);
+				temp.put(SPEED.SLOW, 1530);
 				temp.put(SPEED.REALY_SLOW, 1511);
 				temp.put(SPEED.STOPPED, 1500);
 				temp.put(SPEED.BACKWARD_REALY_SLOW, 1479);
-				temp.put(SPEED.BACKWARD_SLOW, 1446);
-				temp.put(SPEED.BACKWARD_FAST, 500);
+				temp.put(SPEED.BACKWARD_SLOW, 1445);
+				temp.put(SPEED.BACKWARD_FAST, 1438);
 				break;
 			default:
 				throw new IllegalArgumentException("Motor number unknown");
