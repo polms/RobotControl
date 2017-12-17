@@ -8,6 +8,7 @@ class KeyBoardControler implements KeyListener {
 	private static final int BACKWARD = KeyEvent.VK_DOWN;
 	private static final int TO_CLK = KeyEvent.VK_E;
 	private static final int TO_CCLK = KeyEvent.VK_A;
+	private static final int POUSSE = KeyEvent.VK_T;
 	private static final int RECONNECT = KeyEvent.VK_P;
 	private Robot robot;
 	
@@ -21,17 +22,17 @@ class KeyBoardControler implements KeyListener {
 		boolean slow = ev.isShiftDown();
 		Robot.SPEED move_speedfw;
 		Robot.SPEED move_speedbw;
-		if (ev.isShiftDown()) {
+		if (! ev.isShiftDown()) {
+			move_speedfw = Robot.SPEED.REALY_SLOW;
+			move_speedbw = Robot.SPEED.BACKWARD_REALY_SLOW;
+		} else {
 			if (ev.isControlDown()) {
-				move_speedfw = Robot.SPEED.REALY_SLOW;
-				move_speedbw = Robot.SPEED.BACKWARD_REALY_SLOW;
+				move_speedfw = Robot.SPEED.FAST;
+				move_speedbw = Robot.SPEED.BACKWARD_FAST;
 			} else {
 				move_speedfw = Robot.SPEED.SLOW;
 				move_speedbw = Robot.SPEED.BACKWARD_SLOW;
 			}
-		} else {
-			move_speedfw = Robot.SPEED.FAST;
-			move_speedbw = Robot.SPEED.BACKWARD_FAST;
 		}
 		switch (keyCode) {
 		case FORWARD:
@@ -41,22 +42,26 @@ class KeyBoardControler implements KeyListener {
 			robot.move(move_speedbw);
 			break;
 		case LEFT:
-			robot.leftTurn();
+			robot.leftTurn(move_speedfw);
 			break;
 		case RIGHT:
-			robot.rightTurn();
+			robot.rightTurn(move_speedfw);
 			break;
 		case TO_CLK:
-			robot.tourne(ev.isShiftDown() ? Robot.SPEED.REALY_SLOW: Robot.SPEED.SLOW);
+			robot.tourne(move_speedfw);
 			break;
 		case TO_CCLK:
-			robot.tourne(ev.isShiftDown() ? Robot.SPEED.BACKWARD_REALY_SLOW : Robot.SPEED.BACKWARD_SLOW);
+			robot.tourne(move_speedbw);
 			break;
 		case RECONNECT:
 			System.out.println("Trying to reconnect");
 			robot.disconect();
 			robot.connect();
 			break;
+			case POUSSE:
+				robot.pousse();
+				break;
+
 		}
 			
 	}
@@ -79,6 +84,8 @@ class KeyBoardControler implements KeyListener {
 		case TO_CCLK:
 			robot.tourneStop();
 			break;
+			case POUSSE:
+				robot.pousseStop();
 			
 		}
 	}
@@ -92,7 +99,8 @@ class KeyBoardControler implements KeyListener {
 		return "Avancer: "+KeyEvent.getKeyText(FORWARD)+
 				"\nReculer: "+KeyEvent.getKeyText(BACKWARD)+
 				"\nDroite: "+KeyEvent.getKeyText(RIGHT)+
-				"\nGauche"+KeyEvent.getKeyText(LEFT)+
+				"\nGauche:"+KeyEvent.getKeyText(LEFT)+
+				"\nPoussoir:"+KeyEvent.getKeyText(POUSSE)+
 				"\nTourniquet: "+KeyEvent.getKeyText(TO_CLK)+"/"+KeyEvent.getKeyText(TO_CCLK)+
 				"\nReconnect: "+KeyEvent.getKeyText(RECONNECT)+
 				"\nVitesse reduite: shift (controle pour plus d'effet)";

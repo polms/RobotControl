@@ -15,8 +15,10 @@ public class Window extends JFrame {
 		this.addKeyListener(new KeyBoardControler(this.robot));
 		this.buildWindow();
 		this.setVisible(true);
+		this.setAlwaysOnTop(true);
 		this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		robot.connect();
 	    this.addWindowListener(new WindowAdapter()
 						        {
 						            @Override

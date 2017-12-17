@@ -8,10 +8,11 @@ public class Robot {
 	private HashMap<Integer, EnumMap<SPEED, Integer>> motors;
 	private RobotConnector conn;
 	private STATE state;
-	private SPEED roling_speed;
+	private SPEED rolling_speed;
 	private static final int S_LEFT = 1;
 	private static final int S_RIGHT = 2;
 	private static final int S_TOURNE = 3;
+    private static final int S_POUSSE = 7;
 
 	public Robot(String name, RobotConnector connector) {
 		this.name = name;
@@ -20,8 +21,9 @@ public class Robot {
 		this.motors.put(S_LEFT, motorsInitCal(S_LEFT));
 		this.motors.put(S_RIGHT, motorsInitCal(S_RIGHT));
 		this.motors.put(S_TOURNE, motorsInitCal(S_TOURNE));
-		this.state = STATE.STOPPED;
-		this.roling_speed = SPEED.STOPPED;
+        this.motors.put(S_POUSSE, motorsInitCal(S_POUSSE));
+        this.state = STATE.STOPPED;
+		this.rolling_speed = SPEED.STOPPED;
 	}
 
 	public boolean connect() {
@@ -37,21 +39,21 @@ public class Robot {
 		this.moveMotor(S_LEFT, speed);
 		this.moveMotor(S_RIGHT, speed);
 		this.state = STATE.ROLLING;
-		this.roling_speed = speed;
+		this.rolling_speed = speed;
 	}
 	
 	public void stop() {
 		this.moveMotor(S_LEFT, SPEED.STOPPED);
 		this.moveMotor(S_RIGHT, SPEED.STOPPED);
 		this.state = STATE.STOPPED;
-		this.roling_speed = SPEED.STOPPED;
+		this.rolling_speed = SPEED.STOPPED;
 	}
 	
 	public void leftTurn(SPEED speed) {
 		switch (state) {
 		case ROLLING:
 			this.moveMotor(S_LEFT, SPEED.STOPPED);
-			this.moveMotor(S_RIGHT, this.roling_speed);
+			this.moveMotor(S_RIGHT, this.rolling_speed);
 			break;
 		case STOPPED:
 			this.moveMotor(S_LEFT, reverseSpeed(speed));
@@ -63,7 +65,7 @@ public class Robot {
 	public void rightTurn(SPEED speed) {
 		switch (this.state) {
 		case ROLLING:
-			this.moveMotor(S_LEFT, this.roling_speed);
+			this.moveMotor(S_LEFT, this.rolling_speed);
 			this.moveMotor(S_RIGHT, SPEED.STOPPED);
 			break;
 		case STOPPED:
@@ -76,8 +78,8 @@ public class Robot {
 	public void stopTurn() {
 		switch (this.state) {
 		case ROLLING:
-			this.moveMotor(S_RIGHT, this.roling_speed);
-			this.moveMotor(S_LEFT, this.roling_speed);
+			this.moveMotor(S_RIGHT, this.rolling_speed);
+			this.moveMotor(S_LEFT, this.rolling_speed);
 			break;
 		case STOPPED:
 			this.stop();
@@ -89,10 +91,18 @@ public class Robot {
 		this.moveMotor(S_TOURNE, speed);
 	}
 
-	
 	public void tourneStop() {
 		this.moveMotor(S_TOURNE, SPEED.STOPPED);
 	}
+
+    public void pousse() {
+        this.moveMotor(S_POUSSE, 500);
+    }
+
+
+    public void pousseStop() {
+        this.moveMotor(S_POUSSE, 1000);
+    }
 
 	@Override
 	public String toString() {
@@ -140,7 +150,10 @@ public class Robot {
 				temp.put(SPEED.BACKWARD_SLOW, 1445);
 				temp.put(SPEED.BACKWARD_FAST, 1438);
 				break;
-			default:
+            case S_POUSSE:
+                temp = new EnumMap<SPEED, Integer>(SPEED.class);
+                break;
+            default:
 				throw new IllegalArgumentException("Motor number unknown");
 		}
 		return temp;
