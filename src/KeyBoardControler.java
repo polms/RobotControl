@@ -8,12 +8,16 @@ class KeyBoardControler implements KeyListener {
 	private static final int BACKWARD = KeyEvent.VK_DOWN;
 	private static final int TO_CLK = KeyEvent.VK_E;
 	private static final int TO_CCLK = KeyEvent.VK_A;
-	private static final int POUSSE = KeyEvent.VK_T;
+	private static final int POUSSE_FERME = KeyEvent.VK_T;
+	private static final int POUSSE_OUVRE = KeyEvent.VK_R;
 	private static final int RECONNECT = KeyEvent.VK_P;
+	private enum POUSSE {FERMER, POUSSE1, POUSSE2}
+	private POUSSE etat_pousse;
 	private Robot robot;
 	
 	public KeyBoardControler(Robot robot) {
 		this.robot = robot;
+		etat_pousse = POUSSE.FERMER;
 	}
 	
 	@Override
@@ -58,10 +62,6 @@ class KeyBoardControler implements KeyListener {
 			robot.disconect();
 			robot.connect();
 			break;
-			case POUSSE:
-				robot.pousse();
-				break;
-
 		}
 			
 	}
@@ -84,15 +84,36 @@ class KeyBoardControler implements KeyListener {
 		case TO_CCLK:
 			robot.tourneStop();
 			break;
-			case POUSSE:
+		case POUSSE_OUVRE:
+			switch (etat_pousse) {
+			case FERMER:
+				robot.pousse2();
+				etat_pousse = POUSSE.POUSSE1;
+				break;
+			case POUSSE1:
+				robot.pousse();
+				etat_pousse = POUSSE.POUSSE2;
+				break;
+			}
+			break;
+		case POUSSE_FERME:
+			switch (etat_pousse) {
+			case POUSSE1:
 				robot.pousseStop();
-			
+				etat_pousse = POUSSE.FERMER;
+				break;
+			case POUSSE2:
+				robot.pousse2();
+				etat_pousse = POUSSE.POUSSE1;
+				break;
+			}
+			break;
 		}
 	}
 
 	@Override
 	public void keyTyped(KeyEvent ev) {
-		
+
 	}
 	
 	public static String keymap() {
@@ -100,7 +121,7 @@ class KeyBoardControler implements KeyListener {
 				"\nReculer: "+KeyEvent.getKeyText(BACKWARD)+
 				"\nDroite: "+KeyEvent.getKeyText(RIGHT)+
 				"\nGauche:"+KeyEvent.getKeyText(LEFT)+
-				"\nPoussoir:"+KeyEvent.getKeyText(POUSSE)+
+				"\nPoussoir:"+KeyEvent.getKeyText(POUSSE_FERME)+"/"+KeyEvent.getKeyText(POUSSE_OUVRE)+
 				"\nTourniquet: "+KeyEvent.getKeyText(TO_CLK)+"/"+KeyEvent.getKeyText(TO_CCLK)+
 				"\nReconnect: "+KeyEvent.getKeyText(RECONNECT)+
 				"\nVitesse reduite: shift (controle pour plus d'effet)";

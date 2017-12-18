@@ -96,12 +96,15 @@ public class Robot {
 	}
 
     public void pousse() {
-        this.moveMotor(S_POUSSE, 500);
+        this.moveMotor(S_POUSSE, 985);
     }
 
+    public void pousse2() {
+        this.moveMotor(S_POUSSE, 1661);
+    }
 
     public void pousseStop() {
-        this.moveMotor(S_POUSSE, 1000);
+        this.moveMotor(S_POUSSE, 2220);
     }
 
 	@Override
